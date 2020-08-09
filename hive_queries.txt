@@ -1,0 +1,51 @@
+Start hadoop-
+-> su hduser
+->start-dfs.sh
+->start-yarn.sh
+
+Start hive
+-> cd /usr/local/apache-hive-2.1.0-bin/bin
+
+Create table and load csv file-
+
+-> CREATE schema IF NOT EXISTS bda;
+->CREATE external table IF NOT EXISTS bda.table1
+(category STRING,subcat STRING,splatform STRING,con int,percentage float)
+ROW format delimited
+FIELDS terminated by ','
+STORED as textfile
+LOCATION 'path/to/file';
+
+View the contents of the table-
+-> SELECT * from bda.table1;
+
+1) Query to find out what universities in the data set collection are addicted most to the social  Media 
+ 
+-hive>select subcat, sum(con) as sc from bda.table1 where category=”University” group by subcat order by sc desc limit 15; 
+ 
+ 2)Query to find out which social media platform do female respondents use the most 
+
+-hive>select splatform, max(con) as mc from bda.table1 where category=”Gender” and subcat=”Female respondents” group by splatform 
+  order by mc desc limit 1; 
+
+3)Query to find which age group is addicted social media the most   
+ 
+-hive>select subcat, sum(con) as sc from bda.table1 where subcat like ‘age%’ group by subact 
+  order by sc desc; 
+
+4)Query to find out which social media platform is most commonly used and least commonly used among web respondents 
+ 
+- hive>select max(con) as mc, splatform from bda.table1 where category=”Web” group by splatform 
+  order by mc desc limit 1; 
+ 
+- hive>select min(con) as mc, splatform from bda.table1 where category=”Web” group  by splatform limit 1; 
+
+5)Query to find out which social media is most commonly used by "Mobile" users
+
+- hive>select max(con) as mc, splatform from bda.table1 where category=”Mobile” group by splatform 
+  order by mc desc limit 1; 
+
+Close hadoop
+
+->stop-yarn.sh
+->stop-dfs.sh
